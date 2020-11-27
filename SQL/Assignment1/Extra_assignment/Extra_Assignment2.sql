@@ -1,0 +1,9 @@
+CREATE DATABASE Ex2;
+USE Ex2;
+
+CREATE TABLE ABC(
+		ID INT AUTO_INCREMENT PRIMARY KEY,
+        `Name` VARCHAR(60),
+        `Code` CHAR(5),
+        ModifiedDate DATE
+);
