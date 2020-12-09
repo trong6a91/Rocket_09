@@ -198,10 +198,6 @@ SET
 WHERE AccountID=5;
 
 
-SELECT MAX(COUNT(Content))
-FROM Answer
-GROUP BY Content;
-
 SELECT `Account`.AccountID,`Account`.DepartmentID,Department.DepartmentName
 FROM `Account` join Department on `Account`.DepartmentID = Department.DepartmentID;
 
@@ -214,20 +210,39 @@ FROM Department join `Account` on Department.DepartmentID=`Account`.DepartmentID
 GROUP BY Department.DepartmentID
 HAVING COUNT(1)>3;
 
-SELECT ExamQuestion.QuestionID,Question.Content
+SELECT Question.QuestionID,Question.Content,count(1) as so_lan_dung
 FROM ExamQuestion join Question on ExamQuestion.QuestionID=Question.QuestionID
 GROUP BY ExamQuestion.QuestionID
-HAVING COUNT(ExamQuestion.QuestionID)=(SELECT MAX(COUNT(ExamQuestion.QuestionID)));
+HAVING COUNT(ExamQuestion.QuestionID)=(SELECT MAX(cau_hoi)
+										FROM (SELECT COUNT(1) as cau_hoi
+											FROM ExamQuestion JOIN Question ON ExamQuestion.QuestionID=Question.QuestionID
+                                            GROUP BY ExamQuestion.QuestionID) as bc);
 
 SELECT CategoryID,Count(1) as So_lan_sd
 FROM CategoryQuestion join Question on CategoryQuestion.CategoryID=Question.QuestionID
 GROUP BY Question.CategoryID;
 
 
-SELECT Position.PositionID,Position.PositionName
-FROM Position join `Account` on Position.PositionID=`Account`.PositionID
+
+SELECT `Position`.PositionName,COUNT(1)
+FROM `Position` JOIN `Account` ON `Position`.PositionID=`Account`.PositionID
 GROUP BY Position.PositionID
-WHERE COUNT(Position.PositionID)=(SELECT MIN(COUNT(`Account`.PositionID)));
+HAVING COUNT(1)=(SELECT MIN(nguoi) FROM (SELECT COUNT(1) as nguoi 
+											FROM `Position` JOIN `Account` ON `Position`.PositionID=`Account`.PositionID 
+											GROUP BY `Position`.PositionID) as bc);
+
+SELECT Department.DepartmentID,Department.DepartmentName,COUNT(1)
+FROM Department JOIN `Account` ON Department.DepartmentID = `Account`.DepartmentID JOIN `Position` ON  `Position`.PositionID=`Account`.PositionID
+GROUP BY Department.DepartmentID,`Position`.PositionID;
+
+SELECT *
+FROM Question JOIN CategoryQuestion ON Question.CategoryID=CategoryQuestion.CategoryID JOIN TypeQuestion ON Question.TypeID = TypeQuestion.TypeID;
+
+
+SELECT TypeName,COUNT(1)
+FROM Question JOIN TypeQuestion ON Question.TypeID = TypeQuestion.TypeID
+GROUP BY TypeName;
+
 
 								
 
